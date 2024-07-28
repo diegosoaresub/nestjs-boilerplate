@@ -51,6 +51,7 @@ export class LambdaServerFactory {
         {
           bodyParser: true,
           cors: true,
+          logger: ['error', 'warn', 'log'],
         },
       );
 

@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import * as cdk from 'aws-cdk-lib';
-import { ISecurityGroup, IVpc, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { ISecurityGroup, IVpc, Peer, Port, SecurityGroup, Vpc } from "aws-cdk-lib/aws-ec2";
 import { Construct } from 'constructs';
 import { createName } from '../../utils/create-name';
 import { createOutput } from '../../utils/create-output';
 import { GenericSecurityGroupProps } from './props/generic-security-group.props';
+import { vpcCDIR } from "../../constants";
 
 export class GenericSecurityGroup extends Construct {
   vpc: IVpc;
@@ -43,13 +44,32 @@ export class GenericSecurityGroup extends Construct {
       createName(`${scopedName}-${name}`, config);
 
     // outputs
-    console.log('export', createNameScoped('id', props));
     createOutput(this, createNameScoped('id', props), this.vpc.vpcId);
-    createOutput(this, createNameScoped('subnet-id-1', props), this.vpc.publicSubnets[0].subnetId);
-    createOutput(this, createNameScoped('subnet-route-table-id-1', props), this.vpc.publicSubnets[0].routeTable.routeTableId);
-    createOutput(this, createNameScoped('subnet-id-2', props), this.vpc.publicSubnets[1].subnetId);
-    createOutput(this, createNameScoped('subnet-route-table-id-2', props), this.vpc.publicSubnets[1].routeTable.routeTableId);
-    createOutput(this, createNameScoped('security-group-id', props), this.securityGroup.securityGroupId);
+    createOutput(
+      this,
+      createNameScoped('subnet-public-id-1', props),
+      this.vpc.publicSubnets[0].subnetId,
+    );
+    createOutput(
+      this,
+      createNameScoped('subnet-public-id-2', props),
+      this.vpc.publicSubnets[1].subnetId,
+    );
+    createOutput(
+      this,
+      createNameScoped('subnet-private-id-1', props),
+      this.vpc.privateSubnets[0].subnetId,
+    );
+    createOutput(
+      this,
+      createNameScoped('subnet-private-id-2', props),
+      this.vpc.privateSubnets[1].subnetId,
+    );
+    createOutput(
+      this,
+      createNameScoped('security-group-id', props),
+      this.securityGroup.securityGroupId,
+    );
   }
 
   // import resources
@@ -57,26 +77,29 @@ export class GenericSecurityGroup extends Construct {
     // create name scoped
     const createNameScoped = (name) =>
       createName(`${scopedName}-${name}`, props);
-    console.log('import', createNameScoped('id'));
 
     // vpc resource
     const vpc = Vpc.fromVpcAttributes(scope, createNameScoped('id'), {
       vpcId: cdk.Fn.importValue(createNameScoped('id')),
-      availabilityZones: ['sa-east-1'],
-      publicSubnetIds: [
-        cdk.Fn.importValue(createNameScoped('subnet-id-1')),
-        cdk.Fn.importValue(createNameScoped('subnet-id-2')),
+      availabilityZones: ['us-east-2a', 'us-east-2b'],
+      privateSubnetIds: [
+        cdk.Fn.importValue(createNameScoped('subnet-private-id-1')),
+        cdk.Fn.importValue(createNameScoped('subnet-private-id-2')),
       ],
-      publicSubnetRouteTableIds: [
-        cdk.Fn.importValue(createNameScoped('subnet-route-table-id-1')),
-        cdk.Fn.importValue(createNameScoped('subnet-route-table-id-2')),
+      publicSubnetIds: [
+        cdk.Fn.importValue(createNameScoped('subnet-public-id-1')),
+        cdk.Fn.importValue(createNameScoped('subnet-public-id-2')),
       ],
     });
+
     const securityGroup = SecurityGroup.fromSecurityGroupId(
       scope,
       createNameScoped('security-group-id'),
       cdk.Fn.importValue(createNameScoped('security-group-id')),
     );
+
+    securityGroup.addIngressRule(Peer.ipv4(vpcCDIR), Port.tcp(27017));
+
     return {
       vpc,
       securityGroup,

@@ -4,8 +4,10 @@ import { GenericSecurityGroup } from '../constructs/generic-security-group/gener
 import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
 import { ApplicationProps } from '../props/application.props';
 import { Construct } from 'constructs';
-import { Port, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { IpAddresses, Port, SubnetType, Vpc } from "aws-cdk-lib/aws-ec2";
 import { createName as defaultCreateName } from '../utils/create-name';
+import { vpcCDIR } from "../constants";
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 
 export class AuroraDatabaseResource extends Construct {
   auroraDatabaseProxy: AuroraDatabaseProxy;
@@ -20,9 +22,25 @@ export class AuroraDatabaseResource extends Construct {
       defaultCreateName(`aurora-stack-${name}`, config);
 
     // get default account vpc
-    const DEFAULT_VPC_NAME = createName('default-vpc', applicationProps);
-    const vpc = Vpc.fromLookup(this, DEFAULT_VPC_NAME, {
-      isDefault: true,
+
+    const VPC_NAME = createName('vpc', applicationProps);
+    const vpc = new Vpc(this, VPC_NAME, {
+      vpcName: VPC_NAME,
+      ipAddresses: IpAddresses.cidr(vpcCDIR),
+      maxAzs: 2,
+      natGateways: 1,
+      subnetConfiguration: [
+        {
+          subnetType: SubnetType.PUBLIC,
+          cidrMask: 24,
+          name: 'subnet-public',
+        },
+        {
+          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+          cidrMask: 24,
+          name: 'subnet-private',
+        },
+      ],
     });
 
     // create aurora database security group
@@ -47,6 +65,16 @@ export class AuroraDatabaseResource extends Construct {
       },
     );
 
+    // Create a secret in Secrets Manager for the database credentials
+    const dbSecret = new secretsmanager.Secret(this, 'DBSecret', {
+      secretName:'DBSecret',
+      generateSecretString: {
+        secretStringTemplate: JSON.stringify({ username: 'postgres' }),
+        generateStringKey: 'password',
+        excludeCharacters: '"@/\\',
+      },
+    });
+
     // create aurora database cluster
     const DATABASE_CLUSTER_NAME = createName('cluster', applicationProps);
     const { databaseCluster } = new AuroraDatabase(
@@ -56,6 +84,7 @@ export class AuroraDatabaseResource extends Construct {
         ...applicationProps,
         vpc,
         securityGroup: databaseSecurityGroup.securityGroup,
+        dbSecret,
       },
     );
     

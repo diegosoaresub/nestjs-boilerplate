@@ -12,6 +12,7 @@ import {
   createDatabaseAuroraEnvironment,
 } from '../lambda-nestjs-function/constants';
 import { LambdaDatabaseMigrationProps } from './props/lambda-database-migration.prop';
+import { Duration } from "aws-cdk-lib";
 
 export class LambdaDatabaseMigration extends Construct {
   role: iam.Role;
@@ -35,6 +36,7 @@ export class LambdaDatabaseMigration extends Construct {
         ...DEFAULT_NESTJS_LAMBDA_ENVIRONMENT[props.stageName],
         ...createDatabaseAuroraEnvironment(AURORA_DATABASE_NAME),
       },
+      timeout: Duration.seconds(10),
       bundling: {
         minify: false,
         commandHooks: {
@@ -49,7 +51,15 @@ export class LambdaDatabaseMigration extends Construct {
           afterBundling: (): string[] => [],
           beforeInstall: (): string[] => [],
         },
-        nodeModules: ['typeorm', 'ts-node', '@nestjs/config', 'pg', 'bcryptjs'],
+        nodeModules: [
+          'typeorm',
+          'ts-node',
+          '@nestjs/config',
+          'pg',
+          'bcryptjs',
+          '@nestjs/swagger',
+          '@nestjs/typeorm',
+        ],
       },
       entry: join(
         __dirname,

@@ -13,4 +13,5 @@ export default registerAs('app', () => ({
   fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
   headerLanguage: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
   i18nDirectory: process.env.I18N_DIRECTORY ?? join(__dirname, '/i18n/'),
+  localDevelopment: process.env.LOCAL_DEVELOPMENT || 'false',
 }));

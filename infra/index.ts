@@ -14,7 +14,7 @@ const createStacks = () => {
       name: 'application-layer',
       provide: ApplicationLayerStack,
       dependencies: ['core-layer'],
-    }
+    },
   ];
 };
 
@@ -28,14 +28,14 @@ const infraestructure = new AtlasInfraestructure({
     // Stage name for the environment
     stageName: 'production',
     // Domain name  environment
-    domainName: 'sandbox.slingui.com',
+    domainName: 'sandbox.dishsphere.com',
     // API domain name for the environment
-    apiDomainName: 'api.sandbox.slingui.com',
+    apiDomainName: 'api.sandbox.dishsphere.com',
     // Public host ID for the  environment (AWS Route 53 Hosted Zone ID)
-    idPublicHostZone: 'Z01545163ANT5OQYS99UY',
+    idPublicHostZone: 'Z05530532SEMIK1PB3KRQ',
     env: {
       // AWS account ID for the environment
-      account: '767397837500',
+      account: '058264135739',
       // AWS region for the environment (e.g., 'us-east-1')
       region: 'us-east-1',
     },
@@ -47,14 +47,14 @@ const infraestructure = new AtlasInfraestructure({
     // Stage name for the environment
     stageName: 'development',
     // Domain name  environment
-    domainName: 'sandbox.slingui.com',
+    domainName: 'sandbox.dishsphere.com',
     // API domain name for the environment
-    apiDomainName: 'api.sandbox.slingui.com',
+    apiDomainName: 'api.sandbox.dishsphere.com',
     // Public host zone ID for the  environment (AWS Route 53 Hosted Zone ID)
-    idPublicHostZone: 'Z01545163ANT5OQYS99UY',
+    idPublicHostZone: 'Z05530532SEMIK1PB3KRQ',
     env: {
       // AWS account ID for the environment
-      account: '767397837500',
+      account: '058264135739',
       // AWS region for the environment (e.g., 'us-east-1')
       region: 'us-east-1',
     },

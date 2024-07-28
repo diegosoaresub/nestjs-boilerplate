@@ -20,7 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "npx env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "lambda:typeorm": "npx typeorm-lambda-proxy $LAMBDA_NAME node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda-cli.data-source.js",
+    "lambda:typeorm": "npx typeorm-lambda-proxy $LAMBDA_MIGRATION_NAME node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda-cli.data-source.js",
     "migration:generate": "npm run typeorm -- --dataSource=src/common/database/local-cli.data-source.ts migration:generate",
     "migration:create": "npm run typeorm -- migration:create",
     "migration:run": "npm run typeorm -- --dataSource=src/common/database/local-cli.data-source.ts migration:run",
@@ -28,11 +28,13 @@
     "documentation": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe",
     "documentation:serve": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe -s",
     "schema:drop": "npm run typeorm -- --dataSource=src/common/database/local-cli.data-source.ts schema:drop",
-    "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts"
+    "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts",
+    "seed:run:lambda": "npx typeorm-lambda-proxy $LAMBDA_MIGRATION_NAME  node ./dist/app/common/database/seeds/run-seed.js --dataSource=dist/app/common/database/lambda-cli.data-source.js"
   },
   "dependencies": {
     "@atlas-org/database": "^0.0.6",
     "@aws-sdk/client-dynamodb": "^3.556.0",
+    "@aws-sdk/client-secrets-manager": "^3.556.0",
     "@aws-sdk/rds-signer": "^3.556.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.2",

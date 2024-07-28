@@ -101,16 +101,21 @@ If you change the applicationName in infra/index.ts, you should update the SESSI
 
 ## Step 4: Deploy Your Stack
 
-1. Specify the profile and deploy your stack:
+1. Specify the profile and the environment to deploy your stack:
 ```bash
 npm run build
 npm run build:infra
-npx cdk deploy --all --profile AdministratorAccess-767397837500
+npx cdk deploy --context=environment=development --all --profile AdministratorAccess-767397837500
 ```
 
-## Step 5: Run Your Lambda Function to run migrations
+## Step 5: Trigger Your Lambda Function to run migrations
 
 If you have a Lambda function to run, use the following command, replacing `LAMBDA_NAME` with the appropriate name:
 ```bash
-LAMBDA_NAME=dev-atlas-lambda-database-migration npm run lambda:typeorm
+LAMBDA_MIGRATION_NAME=atlas-development-migration npm run lambda:typeorm migration:run
+```
+
+## Step 6: Trigger Your Lambda Function to seed the database
+```bash
+LAMBDA_MIGRATION_NAME=atlas-development-migration npm run seed:run:lambda
 ```

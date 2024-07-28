@@ -163,6 +163,9 @@ npm run test
 npm run test:e2e
 ```
 
+// npx typeorm-lambda-proxy atlas-development-migration  node ./dist/app/common/database/seeds/run-seed.js --dataSource=dist/app/common/database/lambda-cli.data-source.js
+// npx typeorm-lambda-proxy atlas-development-migration  node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda-cli.data-source.js migration:run
+
 ## Inspirations:
 
 https://github.com/brocoders/nestjs-boilerplate

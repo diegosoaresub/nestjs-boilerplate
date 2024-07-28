@@ -1,11 +1,11 @@
 import { ConfigService } from '@nestjs/config';
-import { DynamoDBAdapter } from './../../auth/oidc/adapters/dynamodb.adapter';
-import { jwks } from './../../common/config/certs/jwks';
+import { DynamoDBAdapter } from '../../auth/oidc/adapters/dynamodb.adapter';
+import { jwks } from '../config/certs/jwks';
 import { ClientsService } from '../../auth/oidc/clients/clients.service';
 import { accessTokenProvider } from '../../auth/oidc/providers/access-token.provider';
 import { AccountProvider } from '../../auth/oidc/providers/account.provider';
 import { logoutSource } from '../../auth/oidc/sources/logout.source';
-import { AuthService } from './../../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 
 export const oidcProviderFactory = async (
   configService: ConfigService,

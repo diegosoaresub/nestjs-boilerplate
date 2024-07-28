@@ -116,7 +116,7 @@ export const DEFAULT_NESTJS_LAMBDA_ENVIRONMENT = {
 
     AWS_STORAGE_CREDENTIAL: 'profile',
     AWS_STORAGE_REGION: 'us-east-1',
-  }
+  },
 };
 
 export const createDatabaseAuroraEnvironment = (name: string) => {
@@ -129,5 +129,6 @@ export const createDatabaseAuroraEnvironment = (name: string) => {
     DATABASE_REJECT_UNAUTHORIZED: 'true',
     DATABASE_SSL_ENABLED: 'true',
     DATABASE_SYNCHRONIZE: 'false',
+    DATABASE_SECRET_NAME: cdk.Fn.importValue(name + '-proxy-secret-name'),
   };
 };

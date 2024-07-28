@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { TypeOrmConfigService } from './../common/database/typeorm-config.service';
+import { TypeOrmConfigService } from '../common/database/typeorm-config.service';
 
 @Module({
   imports: [],

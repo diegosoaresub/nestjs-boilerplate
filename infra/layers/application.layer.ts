@@ -75,11 +75,12 @@ export class ApplicationLayerStack extends cdk.Stack {
     });
 
     // Security Group
-    const { vpc, securityGroup: databaseProxySecurityGroup } = GenericSecurityGroup.fromName(
-      this,
-      'database-proxy-sg',
-      applicationProps,
-    );
+    const { vpc, securityGroup: databaseProxySecurityGroup } =
+      GenericSecurityGroup.fromName(
+        this,
+        'database-proxy-sg',
+        applicationProps,
+      );
 
     //Lambda SG
     const lambdaSecurityGroup = new GenericSecurityGroup(
@@ -93,7 +94,11 @@ export class ApplicationLayerStack extends cdk.Stack {
     );
 
     // Lambda access to proxy
-    databaseProxySecurityGroup.addIngressRule(lambdaSecurityGroup.securityGroup, Port.tcp(5432), `Allows access from the migrations lambda to the proxy`);
+    databaseProxySecurityGroup.addIngressRule(
+      lambdaSecurityGroup.securityGroup,
+      Port.tcp(5432),
+      `Allows access from the migrations lambda to the proxy`,
+    );
 
     this.createLambdaResources(
       this,
@@ -122,7 +127,7 @@ export class ApplicationLayerStack extends cdk.Stack {
     new CnameRecord(this, CNAME_RECORD_SET_NAME, {
       zone: publicHostedZone,
       recordName: 'api',
-      domainName: api.domainName.domainNameAliasDomainName
+      domainName: api.domainName.domainNameAliasDomainName,
     });
   }
 

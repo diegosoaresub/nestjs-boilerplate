@@ -22,7 +22,7 @@ export class AuroraDatabaseProxy extends Construct {
       secrets: [auroraDatabaseCluster.secret],
       vpc,
       securityGroups: [securityGroup],
-      iamAuth: true,
+      iamAuth: false, // Disable IAM authentication to use password-based authentication
     });
     this.exports('aurora-database-proxy', props);
   }
@@ -42,10 +42,10 @@ export class AuroraDatabaseProxy extends Construct {
       this.proxy.endpoint,
     );
     createOutput(this, createNameScoped('host', props), this.proxy.endpoint);
+    createOutput(this, createNameScoped('secret-name', props), props.auroraDatabaseCluster.secret.secretName);
   }
 
-  // import resrouces
-
+  // import resources
   static fromNameAndSecurityGroup(
     scope,
     scopedName: string,

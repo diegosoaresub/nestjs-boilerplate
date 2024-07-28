@@ -1,8 +1,5 @@
 import { Aspects } from 'aws-cdk-lib';
-import {
-  InstanceType,
-  SubnetType,
-} from 'aws-cdk-lib/aws-ec2';
+import { InstanceType, SubnetType } from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
@@ -29,12 +26,13 @@ export class AuroraDatabase extends Construct {
       DATABASE_CLUSTER_NAME,
       {
         instances: 1,
-        iamAuthentication: true,
+        iamAuthentication: false, // Disable IAM authentication for password-based authentication
         port: 5432,
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_16_1,
         }),
         storageEncrypted: true,
+        credentials: rds.Credentials.fromSecret(auroraDatabaseProps.dbSecret),
         instanceProps: {
           vpc: vpc,
           instanceType: new InstanceType('serverless'),
